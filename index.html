@@ -3,83 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Beautiful Buttons</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f7fc;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
+    <title>Socket.IO Client</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script>
+      // Создание подключения к серверу
+      const socket = io("https://signal-server.waterhedgehog.com");
 
-      .container {
-        text-align: center;
-      }
+      // Обработка сообщений от сервера
+      socket.on("message", (data) => {
+        console.log(data);
+      });
 
-      h1 {
-        color: #333;
-      }
-
-      .button {
-        padding: 12px 24px;
-        font-size: 16px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin: 10px;
-      }
-
-      .button-primary {
-        background-color: #4caf50;
-        color: white;
-      }
-
-      .button-primary:hover {
-        background-color: #45a049;
-      }
-
-      .button-secondary {
-        background-color: #008cba;
-        color: white;
-      }
-
-      .button-secondary:hover {
-        background-color: #007bb5;
-      }
-
-      .button-danger {
-        background-color: #f44336;
-        color: white;
-      }
-
-      .button-danger:hover {
-        background-color: #da190b;
-      }
-
-      .button-outline {
-        background-color: transparent;
-        color: #333;
-        border: 2px solid #333;
-      }
-
-      .button-outline:hover {
-        background-color: #333;
-        color: white;
-      }
-    </style>
+      // Отправка сообщения на сервер
+      socket.emit("message", "Hello, server!");
+    </script>
   </head>
   <body>
-    <div class="container">
-      <h1>Click the buttons below!</h1>
-      <button class="button button-primary">Primary Button</button>
-      <button class="button button-secondary">Secondary Button</button>
-      <button class="button button-danger">Danger Button</button>
-      <button class="button button-outline">Outline Button</button>
-    </div>
+    <h1>Socket.IO Client</h1>
   </body>
 </html>
