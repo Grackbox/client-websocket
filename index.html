@@ -3,22 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Socket.IO Client</title>
+    <title>Socket.IO Chat</title>
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-    <script>
-      // Создание подключения к серверу
-      const socket = io("https://signal-server.waterhedgehog.com");
-
-      // Обработка сообщений от сервера
-      socket.on("message", (data) => {
-        console.log(data);
-      });
-
-      // Отправка сообщения на сервер
-      socket.emit("message", "Hello, server!");
-    </script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      #messages {
+        max-height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+      }
+      .message {
+        margin-bottom: 10px;
+      }
+      .user {
+        font-weight: bold;
+        color: #007bff;
+      }
+    </style>
   </head>
   <body>
-    <h1>Socket.IO Client</h1>
+    <h1>Socket.IO Chat</h1>
+
+    <!-- Input для имени пользователя -->
+    <div>
+      <label for="username">Enter your username: </label>
+      <input type="text" id="username" placeholder="Username" />
+      <button id="set-username">Set Username</button>
+    </div>
+
+    <!-- Сообщения -->
+    <div id="messages"></div>
+
+    <!-- Форма для отправки сообщений -->
+    <input type="text" id="message-input" placeholder="Type your message..." />
+    <button id="send-message">Send</button>
+
+    <script>
+      const socket = io("https://signal-server.waterhedgehog.com");
+      let username = "";
+
+      // Устанавливаем имя пользователя
+      document.getElementById("set-username").onclick = function () {
+        username = document.getElementById("username").value;
+        if (username) {
+          alert(`Welcome, ${username}!`);
+        } else {
+          alert("Please enter a username.");
+        }
+      };
+
+      // Отправка сообщения
+      document.getElementById("send-message").onclick = function () {
+        const message = document.getElementById("message-input").value;
+        if (message && username) {
+          socket.emit("chat message", { username, message });
+          document.getElementById("message-input").value = ""; // очищаем поле
+        } else {
+          alert("Please enter a message and set your username.");
+        }
+      };
+
+      // Обработка полученных сообщений
+      socket.on("chat message", (data) => {
+        const messagesDiv = document.getElementById("messages");
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        messageDiv.innerHTML = `<span class="user">${data.username}</span>: ${data.message}`;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // прокручиваем вниз
+      });
+    </script>
   </body>
 </html>

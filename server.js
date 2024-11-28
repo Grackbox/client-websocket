@@ -35,12 +35,17 @@ io.on("connection", (socket) => {
   console.log("A user connected");
 
   // Пример отправки сообщения от сервера
-  socket.emit("message", "Hello from WebSocket server!");
+  socket.emit("chat message", {
+    username: "Server",
+    message: "Welcome to the chat!",
+  });
 
   // Получение сообщений от клиента
-  socket.on("message", (data) => {
-    console.log("Message from client:", data);
-    socket.emit("message", "Message received: " + data);
+  socket.on("chat message", (data) => {
+    console.log(`Message from ${data.username}: ${data.message}`);
+
+    // Отправка полученного сообщения всем клиентам
+    io.emit("chat message", data);
   });
 
   socket.on("disconnect", () => {
