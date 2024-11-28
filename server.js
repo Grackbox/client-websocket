@@ -1,12 +1,12 @@
-// server.js
 const express = require("express");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
+const socketIo = require("socket.io");
 
 const app = express();
 
-// Чтение сертификатов SSL
+// Чтение SSL сертификатов
 const options = {
   cert: fs.readFileSync(
     "/etc/letsencrypt/live/signal-server.waterhedgehog.com/fullchain.pem"
@@ -16,13 +16,40 @@ const options = {
   ),
 };
 
-// Настройка маршрута для отдачи HTML контента
+// Создание HTTPS сервера
+const server = https.createServer(options, app);
+
+// Инициализация Socket.IO (с привязкой к тому же серверу)
+const io = socketIo(server);
+
+// Статический маршрут для отдачи контента (например, HTML, JS, CSS)
+app.use(express.static(path.join(__dirname, "public")));
+
+// Маршрут для отдачи HTML страницы
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html")); // Замените на свой путь к HTML файлу
+  res.sendFile(path.join(__dirname, "index.html")); // Путь к вашему HTML файлу
 });
 
-// Запуск HTTPS сервера на порту 443 (по умолчанию для HTTPS)
-https.createServer(options, app).listen(443, () => {
+// Обработчик событий Socket.IO
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  // Пример отправки сообщения от сервера
+  socket.emit("message", "Hello from WebSocket server!");
+
+  // Получение сообщений от клиента
+  socket.on("message", (data) => {
+    console.log("Message from client:", data);
+    socket.emit("message", "Message received: " + data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
+
+// Запуск сервера на порту 443
+server.listen(443, () => {
   console.log(
     "HTTPS сервер запущен на https://signal-server.waterhedgehog.com"
   );
