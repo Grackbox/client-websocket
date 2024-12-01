@@ -42,7 +42,8 @@
     <button id="send-message">Send</button>
 
     <script>
-      const socket = io("https://signal-server.waterhedgehog.com");
+      // Изменяем URL на /ws для подключения через Nginx
+      const socket = io("https://signal-server.waterhedgehog.com/ws");
       let username = "";
 
       // Устанавливаем имя пользователя
