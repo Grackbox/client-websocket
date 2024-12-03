@@ -44,7 +44,7 @@
     <script>
       // Изменяем URL на /ws для подключения через Nginx
 
-      const socket = io(socketUrl, {
+      const socket = io("https://chat.waterhedgehog.com/", {
         secure: true,
         reconnection: true,
         rejectUnauthorized: false,
@@ -73,10 +73,10 @@
           alert("Please enter a message and set your username.");
         }
       };
-      socket.current.on("connect", () => {
+      socket.on("connect", () => {
         console.log("Connected to socket.io server");
 
-        socket.current?.emit("join", {
+        socket.emit("join", {
           channelName: "vova",
           userName: "vovan",
         });
