@@ -69,18 +69,17 @@
         if (message && username) {
           socket.emit("chat message", { username, message });
           document.getElementById("message-input").value = ""; // очищаем поле
+
+          socket.emit("join", {
+            channelName: "vova",
+            userName: "vovan",
+          });
         } else {
           alert("Please enter a message and set your username.");
         }
       };
       socket.on("connect", () => {
         console.log("Connected to socket.io server");
-
-        socket.emit("join", {
-          channelName: "vova",
-          userName: "vovan",
-        });
-        console.log("Join event emitted");
       });
       // Обработка полученных сообщений
       socket.on("chat message", (data) => {
