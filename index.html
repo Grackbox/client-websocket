@@ -43,7 +43,13 @@
 
     <script>
       // Изменяем URL на /ws для подключения через Nginx
-      const socket = io("https://chat.waterhedgehog.com/");
+
+      const socket = io(socketUrl, {
+        secure: true,
+        reconnection: true,
+        rejectUnauthorized: false,
+      });
+      // const socket = io("https://chat.waterhedgehog.com/");
 
       let username = "";
 
@@ -67,7 +73,14 @@
           alert("Please enter a message and set your username.");
         }
       };
+      socket.current.on("connect", () => {
+        console.log("Connected to socket.io server");
 
+        socket.current?.emit("join", {
+          channelName: "vova",
+          userName: "vovan",
+        });
+      });
       // Обработка полученных сообщений
       socket.on("chat message", (data) => {
         const messagesDiv = document.getElementById("messages");
